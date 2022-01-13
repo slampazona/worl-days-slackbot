@@ -1,0 +1,27 @@
+{
+  "name": "world_days_bot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/slampazona/worl-days-slackbot.git"
+  },
+  "bugs": {
+    "url": "https://github.com/slampazona/worl-days-slackbot/issues"
+  },
+  "homepage": "https://github.com/slampazona/worl-days-slackbot#readme",
+  "description": "",
+  "dependencies": {
+    "@slack/web-api": "^6.5.1",
+    "axios": "^0.24.0",
+    "dayjs": "^1.10.7",
+    "dotenv-flow": "^3.2.0"
+  }
+}
