@@ -75,18 +75,15 @@ const sendDayMessage = (conversationId) => {
             }
 
             text += `${worldDay.title}\n\n`;
-            const descriptions = worldDay.description.split('\n').filter((description) => description !== '');
 
-            descriptions.forEach((description) => {
-                blocks.push({
-                    "type": "section",
-                    "text": {
-                        "type": "mrkdwn",
-                        "text": description
-                    }
-                });
-                text += `${description}\n`;
-            })
+            blocks.push({
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": worldDay.description
+                }
+            });
+            text += `${worldDay.description}\n`;
         });
         blocks.push({
             "type": "section",
@@ -140,8 +137,8 @@ const sendDayMessage = (conversationId) => {
 let lastSentAt = null;
 console.log("Worker starting at", dayjs().format('HH:mm'), '...');
 setInterval(() => {
-    if (lastSentAt !== dayjs().format('HH:mm') && dayjs().format('HH:mm') === process.env.PUNCH_TIME) {
+    if (lastSentAt !== dayjs().format('HH:mm') && (dayjs().format('HH:mm') === process.env.PUNCH_TIME || process.env.NODE_ENV === 'development')) {
         sendDayMessage(process.env.CHANNEL_ID);
     }
     console.log("Worker still running at ", dayjs().format('HH:mm'), 'waiting to punch at', process.env.PUNCH_TIME);
-}, 30000)
+}, process.env.INTERVAL || 30000)
