@@ -140,8 +140,8 @@ const sendDayMessage = (conversationId) => {
 let lastSentAt = null;
 console.log("Worker starting at", dayjs().format('HH:mm'), '...');
 setInterval(() => {
-    if (lastSentAt !== dayjs().format('HH:mm') && dayjs().format('HH:mm') === '09:45') {
+    if (lastSentAt !== dayjs().format('HH:mm') && dayjs().format('HH:mm') === process.env.PUNCH_TIME) {
         sendDayMessage(process.env.CHANNEL_ID);
     }
-    console.log("Worker still running at ", dayjs().format('HH:mm'));
+    console.log("Worker still running at ", dayjs().format('HH:mm'), 'waiting to punch at', process.env.PUNCH_TIME);
 }, 30000)
