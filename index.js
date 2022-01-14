@@ -11,7 +11,7 @@ const numberTranslate = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', '
 dayjs.locale('fr')
 dayjs.extend(localizedFormat);
 dayjs.extend(timezone);
-dayjs.tz.setDefault("Europe/Paris");
+dayjs.tz.setDefault(process.env.TZ);
 // An access token (from your Slack app or custom integration - xoxp, xoxb)
 const token = process.env.SLACK_TOKEN; // Add a bot https://my.slack.com/services/new/bot and put the token 
 
@@ -140,7 +140,7 @@ const sendDayMessage = (conversationId) => {
 let lastSentAt = null;
 console.log("Worker starting at", dayjs().format('HH:mm'), '...');
 setInterval(() => {
-    if (lastSentAt !== dayjs().format('HH:mm') && dayjs().format('HH:mm') === '09:35') {
+    if (lastSentAt !== dayjs().format('HH:mm') && dayjs().format('HH:mm') === '09:45') {
         sendDayMessage(process.env.CHANNEL_ID);
     }
     console.log("Worker still running at ", dayjs().format('HH:mm'));
