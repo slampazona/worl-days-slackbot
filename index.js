@@ -135,8 +135,10 @@ const sendDayMessage = (conversationId) => {
 }
 
 let lastSentAt = null;
+console.log("Worker starting...");
 setInterval(() => {
     if (lastSentAt !== dayjs().format('HH:mm') && dayjs().format('HH:mm') === '09:00') {
         sendDayMessage(process.env.CHANNEL_ID);
     }
+    console.log("Worker still running.");
 }, 30000)
