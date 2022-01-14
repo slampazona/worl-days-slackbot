@@ -3,7 +3,8 @@ const { WebClient } = require('@slack/web-api');
 const axios = require('axios');
 const dayjs = require('dayjs');
 require('dayjs/locale/fr');
-var timezone = require('dayjs/plugin/timezone');
+const utc = require('dayjs/plugin/utc')
+const timezone = require('dayjs/plugin/timezone');
 
 const localizedFormat = require('dayjs/plugin/localizedFormat');
 const worldDaysList = require('./world_days.json');
