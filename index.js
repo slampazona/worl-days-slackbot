@@ -2,13 +2,18 @@ require('dotenv-flow').config();
 const { WebClient } = require('@slack/web-api');
 const axios = require('axios');
 const dayjs = require('dayjs');
-require('dayjs/locale/fr')
-const localizedFormat = require('dayjs/plugin/localizedFormat')
+require('dayjs/locale/fr');
+var timezone = require('dayjs/plugin/timezone');
+
+const localizedFormat = require('dayjs/plugin/localizedFormat');
 const worldDaysList = require('./world_days.json');
 const numberTranslate = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'height', 'nine']
 dayjs.locale('fr')
 dayjs.extend(localizedFormat);
-
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.tz.guess();
+dayjs.tz.setDefault("Europe/Paris");
 // An access token (from your Slack app or custom integration - xoxp, xoxb)
 const token = process.env.SLACK_TOKEN; // Add a bot https://my.slack.com/services/new/bot and put the token 
 
@@ -135,10 +140,10 @@ const sendDayMessage = (conversationId) => {
 }
 
 let lastSentAt = null;
-console.log("Worker starting...");
+console.log("Worker starting at", dayjs().format('HH:mm'), '...');
 setInterval(() => {
     if (lastSentAt !== dayjs().format('HH:mm') && dayjs().format('HH:mm') === '09:35') {
         sendDayMessage(process.env.CHANNEL_ID);
     }
-    console.log("Worker still running.");
+    console.log("Worker still running at ", dayjs().format('HH:mm'));
 }, 30000)
