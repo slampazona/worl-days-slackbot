@@ -17,6 +17,43 @@ const token = process.env.SLACK_TOKEN; // Add a bot https://my.slack.com/service
 
 const web = new WebClient(token);
 
+const getCitationBlocks = async () => {
+    const blocks = [];
+    const citation = await axios('https://kaamelott.chaudie.re/api/random')
+        .then((result) => result.data.citation)
+        .catch((e) => console.warn(e));
+
+    if (citation) {
+        blocks.push({
+            "type": "context",
+            "elements": [
+                {
+                    "type": "mrkdwn",
+                    "text": "Avec une petite citation ça fait pas de mal"
+                }
+            ]
+        });
+        blocks.push({
+            "type": "context",
+            "elements": [
+                {
+                    "type": "mrkdwn",
+                    "text": `>${citation.citation.replace(/[\(\)]/gm, '_').replace(/\'\'/gm, '"').replace(/\\n/gm, '')}`
+                }
+            ]
+        });
+        blocks.push({
+            "type": "context",
+            "elements": [
+                {
+                    "type": "mrkdwn",
+                    "text": `_${citation.infos.personnage} - ${citation.infos.saison} - ${citation.infos.episode}_`
+                }
+            ]
+        });
+    }
+    return blocks;
+}
 const sendDayMessage = (conversationId) => {
     lastSentAt = dayjs().format('HH:mm');
     let current_day = dayjs().format('YYYY-MM-DD');
@@ -25,9 +62,7 @@ const sendDayMessage = (conversationId) => {
     if (foundDaysByDate.length) {
         const isManyDays = foundDaysByDate.length > 1;
 
-
-        //`Aujourd'hui il y a ${foundDaysByDate.length} journée${ isManyDays ? 's' : '' } particulières${ isManyDays ? 's' : '' }`
-        const blocks = [{
+        let blocks = [{
             "type": "header",
             "text": {
                 "type": "plain_text",
@@ -94,43 +129,56 @@ const sendDayMessage = (conversationId) => {
         });
 
         (async () => {
-            const citation = await axios('https://kaamelott.chaudie.re/api/random')
-                .then((result) => result.data.citation)
-                .catch((e) => console.warn(e));
             blocks.push({
                 "type": "divider"
             });
-            if (citation) {
-                blocks.push({
-                    "type": "context",
-                    "elements": [
-                        {
-                            "type": "mrkdwn",
-                            "text": "Avec une petite citation ça fait pas de mal"
-                        }
-                    ]
-                });
-                blocks.push({
-                    "type": "context",
-                    "elements": [
-                        {
-                            "type": "mrkdwn",
-                            "text": `>${citation.citation.replace(/[\(\)]/gm, '_').replace(/\'\'/gm, '"').replace(/\\n/gm, '')}`
-                        }
-                    ]
-                });
-                blocks.push({
-                    "type": "context",
-                    "elements": [
-                        {
-                            "type": "mrkdwn",
-                            "text": `_${citation.infos.personnage} - ${citation.infos.saison} - ${citation.infos.episode}_`
-                        }
-                    ]
-                });
-            }
+            blocks = [...blocks, ...await getCitationBlocks()];
             web.chat.postMessage({ channel: conversationId, blocks, text }).catch((error) => console.log(error.data));
         })();
+    }
+    else {
+        let blocks = [{
+            "type": "header",
+            "text": {
+                "type": "plain_text",
+                "text": ":newspaper:  Instant culture pour égayer ta journée  :newspaper:"
+            }
+        }, {
+            "type": "context",
+            "elements": [
+                {
+                    "text": `*${dayjs().format('LL')}*  |  La journée mondiale`,
+                    "type": "mrkdwn"
+                }
+            ]
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": `*Aujourd'hui il n'y a pas de journée mondiale ! Et ouep !*`
+            }
+        }];
+
+        let text = ' Instant culture pour égayer ta journée\n\n';
+        text += `Aujourd'hui il n'y a pas de journée mondiale ! Et ouep !\n`
+
+        blocks.push({
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "*Et voilà ! Passe une bonne journée !*"
+            }
+        });
+
+        (async () => {
+            blocks.push({
+                "type": "divider"
+            });
+            blocks = [...blocks, ...await getCitationBlocks()];
+            web.chat.postMessage({ channel: conversationId, blocks, text }).catch((error) => console.log(error.data));
+        })();
+
     }
 }
 
